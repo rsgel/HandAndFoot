@@ -178,6 +178,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('books', 'sevens', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
             <div>
@@ -189,6 +190,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('books', 'fives', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
             <div>
@@ -200,6 +202,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('books', 'wilds', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
           </div>
@@ -217,6 +220,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('books', 'red', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
             <div>
@@ -228,6 +232,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('books', 'black', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
           </div>
@@ -242,6 +247,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
               onChange={(e) => setMeldedPoints(parseInt(e.target.value) || 0)}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               disabled={submitted}
+              inputMode="numeric"
             />
             <p className="text-sm text-gray-400 mt-1">
               Enter the total points from melded cards (Jokers: 50, Aces/2s: 20, 8-K: 10, 4-7: 5)
@@ -261,6 +267,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('penalties', 'blackThrees', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
             <div>
@@ -272,6 +279,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('penalties', 'redThrees', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
           </div>
@@ -300,6 +308,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 onChange={(e) => handleChange('bonuses', 'redThrees', parseInt(e.target.value) || 0)}
                 className="w-20 px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
+                inputMode="numeric"
               />
             </div>
           </div>
