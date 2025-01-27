@@ -63,7 +63,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
     setScore(prev => ({
       ...prev,
       [category]: {
-        ...prev[category as keyof RoundScore],
+        ...(prev[category as keyof RoundScore] as object),
         [subcategory]: value,
       },
     }));
@@ -72,12 +72,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
   const handleSubmit = () => {
     const finalScore = {
       ...score,
-      meldedCards: {
-        jokers: 0,
-        acesAndTwos: 0,
-        eightToKing: 0,
-        fourToSeven: 0,
-      },
+      meldedCards: 0,
       totalScore: currentScore,
     };
     updateRoundScore(teamId, activeRound, finalScore, meldedPoints);
@@ -150,7 +145,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
             onClick={() => setActiveRound(round)}
             className={`px-4 py-2 rounded-t-lg flex items-center space-x-2 ${
               activeRound === round
-                ? 'bg-gray-800 text-white'
+                ? 'bg-green-700 text-white'
                 : 'bg-gray-700 text-gray-300'
             }`}
           >
@@ -163,36 +158,13 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
       </div>
 
       <div className="space-y-4 p-4 bg-gray-800 rounded-lg">
-        <p className="text-gray-300">Meld Requirement: {meldRequirements[activeRound]} points</p>
+        <p className="text-gray-300">Meld Requirement: {meldRequirements[activeRound]} points
+          <span className="absolute inline-flex size-3 ml-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75"></span>
+            <span className="relative inline-flex size-3 rounded-full bg-sky-500"></span>
+          </span>
+        </p>
         <p className="text-lg font-semibold text-green-400">Current Score: {currentScore.toLocaleString()}</p>
-
-        <div className="space-y-2">
-          <h4 className="text-lg font-semibold text-white">Books</h4>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="block text-sm text-gray-300">Red Books</label>
-              <input
-                type="number"
-                min="0"
-                value={score.books.red}
-                onChange={(e) => handleChange('books', 'red', parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                disabled={submitted}
-              />
-            </div>
-            <div>
-              <label className="block text-sm text-gray-300">Black Books</label>
-              <input
-                type="number"
-                min="0"
-                value={score.books.black}
-                onChange={(e) => handleChange('books', 'black', parseInt(e.target.value) || 0)}
-                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
-                disabled={submitted}
-              />
-            </div>
-          </div>
-        </div>
 
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Special Books</h4>
@@ -226,6 +198,34 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.wilds}
                 onChange={(e) => handleChange('books', 'wilds', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                disabled={submitted}
+              />
+            </div>
+          </div>
+        </div>
+        
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold text-white">Books</h4>
+          <div className="grid grid-cols-2 gap-2">
+            <div>
+              <label className="block text-sm text-gray-300">Red Books</label>
+              <input
+                type="number"
+                min="0"
+                value={score.books.red}
+                onChange={(e) => handleChange('books', 'red', parseInt(e.target.value) || 0)}
+                className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                disabled={submitted}
+              />
+            </div>
+            <div>
+              <label className="block text-sm text-gray-300">Black Books</label>
+              <input
+                type="number"
+                min="0"
+                value={score.books.black}
+                onChange={(e) => handleChange('books', 'black', parseInt(e.target.value) || 0)}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
               />
