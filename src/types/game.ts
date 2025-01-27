@@ -20,12 +20,7 @@ export interface BookScore {
 
 export interface RoundScore {
   books: BookScore;
-  meldedCards: {
-    jokers: number;
-    acesAndTwos: number;
-    eightToKing: number;
-    fourToSeven: number;
-  };
+  meldedCards: number;
   penalties: {
     blackThrees: number;
     redThrees: number;

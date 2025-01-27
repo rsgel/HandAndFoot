@@ -1,19 +1,13 @@
 import { create } from 'zustand';
 import type { GameState, Team, TeamScore, RoundScore } from '../types/game';
 
-const calculateRoundScore = (round: RoundScore): number => {
+const calculateRoundScore = (round: RoundScore, meldedPoints: number): number => {
   const bookPoints = 
     round.books.red * 500 +
     round.books.black * 300 +
     round.books.sevens * 5000 +
     round.books.fives * 3000 +
     round.books.wilds * 2500;
-
-  const meldedPoints = 
-    round.meldedCards.jokers * 50 +
-    round.meldedCards.acesAndTwos * 20 +
-    round.meldedCards.eightToKing * 10 +
-    round.meldedCards.fourToSeven * 5;
 
   const penaltyPoints = 
     (round.penalties.blackThrees * -100) +
@@ -30,12 +24,7 @@ const calculateRoundScore = (round: RoundScore): number => {
 
 const initialRoundScore = (): RoundScore => ({
   books: { red: 0, black: 0, sevens: 0, fives: 0, wilds: 0 },
-  meldedCards: {
-    jokers: 0,
-    acesAndTwos: 0,
-    eightToKing: 0,
-    fourToSeven: 0,
-  },
+  meldedCards: 0,
   penalties: {
     blackThrees: 0,
     redThrees: 0,
@@ -74,14 +63,14 @@ export const addCompletedRound = (teamId: number, roundIndex: number) =>
     completedRounds: new Set([...state.completedRounds, `${teamId}-${roundIndex}`])
   }));
 
-export const updateRoundScore = (teamId: number, roundIndex: number, score: RoundScore) =>
+export const updateRoundScore = (teamId: number, roundIndex: number, score: RoundScore, meldedPoints: number) =>
   useGameStore.setState((state) => {
     const newScores = state.scores.map((teamScore) => {
       if (teamScore.teamId === teamId) {
         const newRounds = [...teamScore.rounds];
         newRounds[roundIndex] = {
           ...score,
-          totalScore: calculateRoundScore(score),
+          totalScore: calculateRoundScore(score, meldedPoints),
         };
         return {
           ...teamScore,

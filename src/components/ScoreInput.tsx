@@ -16,12 +16,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
   const meldRequirements = [50, 90, 120, 150];
   const [score, setScore] = useState<RoundScore>({
     books: { red: 0, black: 0, sevens: 0, fives: 0, wilds: 0 },
-    meldedCards: {
-      jokers: 0,
-      acesAndTwos: 0,
-      eightToKing: 0,
-      fourToSeven: 0,
-    },
+    meldedCards: 0,
     penalties: {
       blackThrees: 0,
       redThrees: 0,
@@ -85,7 +80,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
       },
       totalScore: currentScore,
     };
-    updateRoundScore(teamId, activeRound, finalScore);
+    updateRoundScore(teamId, activeRound, finalScore, meldedPoints);
     addCompletedRound(teamId, activeRound);
     setSubmitted(true);
 
@@ -94,7 +89,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
         setActiveRound(activeRound + 1);
         setScore({
           books: { red: 0, black: 0, sevens: 0, fives: 0, wilds: 0 },
-          meldedCards: { jokers: 0, acesAndTwos: 0, eightToKing: 0, fourToSeven: 0 },
+          meldedCards: 0,
           penalties: { blackThrees: 0, redThrees: 0, remainingCards: 0 },
           bonuses: { goingOut: false, redThrees: 0 },
           totalScore: 0,
@@ -239,11 +234,10 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
         </div>
 
         <div className="space-y-2">
-          <h4 className="text-lg font-semibold text-white">Melded Cards Total Points</h4>
+          <h4 className="text-lg font-semibold text-white">Card Points</h4>
           <div>
             <input
               type="number"
-              min="0"
               value={meldedPoints}
               onChange={(e) => setMeldedPoints(parseInt(e.target.value) || 0)}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
