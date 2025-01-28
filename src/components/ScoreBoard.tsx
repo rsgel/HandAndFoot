@@ -1,43 +1,68 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import useGameStore from '../store/gameStore';
 
-export default function ScoreBoard() {
-  const { teams, scores } = useGameStore();
+const ScoreBoard: React.FC = () => {
+  const { teams, completedRounds }: { teams: { id: number; name: string }[]; completedRounds: Set<string> } = useGameStore();
+  const [scores, setScores] = useState<{ [key: number]: number[] }>({});
+
+  useEffect(() => {
+    const savedScores = sessionStorage.getItem('scores');
+    if (savedScores) {
+      setScores(JSON.parse(savedScores));
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem('scores', JSON.stringify(scores));
+  }, [scores]);
+
+  useEffect(() => {
+    const newScores = teams.reduce((acc, team) => {
+      const teamScores = Array.from(completedRounds)
+        .filter(round => round.startsWith(`${team.id}-`))
+        .map(round => {
+          const [, score] = round.split('-');
+          return parseInt(score, 10);
+        });
+      acc[team.id] = teamScores;
+      return acc;
+    }, {} as { [key: number]: number[] });
+    setScores(newScores);
+  }, [teams, completedRounds]);
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full bg-gray-800 text-white">
-        <thead>
-          <tr>
-            <th className="px-4 py-2 text-left">Team</th>
-            <th className="px-4 py-2 text-center">Round 1</th>
-            <th className="px-4 py-2 text-center">Round 2</th>
-            <th className="px-4 py-2 text-center">Round 3</th>
-            <th className="px-4 py-2 text-center">Round 4</th>
-            <th className="px-4 py-2 text-center">Total</th>
-          </tr>
-        </thead>
-        <tbody>
-          {teams.map((team) => {
-            const teamScore = scores.find((s) => s.teamId === team.id);
-            return (
-              <tr key={team.id} className="border-t border-gray-700">
-                <td className="px-4 py-2">
-                  <div className="font-semibold">{team.name}</div>
-                </td>
-                {teamScore?.rounds.map((round, index) => (
-                  <td key={index} className="px-4 py-2 text-center">
-                    {round.totalScore.toLocaleString()}
+    <div>
+      <h2 className="text-2xl font-bold text-white mb-4">Scoreboard</h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-gray-800 rounded-lg">
+          <thead>
+            <tr>
+              <th className="px-4 py-2 text-white">Team</th>
+              {[...Array(4)].map((_, index) => (
+                <th key={index} className="px-4 py-2 text-white">Round {index + 1}</th>
+              ))}
+              <th className="px-4 py-2 text-white">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {teams.map(team => (
+              <tr key={team.id}>
+                <td className="border px-4 py-2 text-white">{team.name}</td>
+                {[...Array(4)].map((_, index) => (
+                  <td key={index} className="border px-4 py-2 text-green-400">
+                    {scores[team.id] && scores[team.id][index] !== undefined ? scores[team.id][index] : 0}
                   </td>
                 ))}
-                <td className="px-4 py-2 text-center font-bold">
-                  {teamScore?.totalScore.toLocaleString()}
+                <td className="border px-4 py-2 text-green-400">
+                  {scores[team.id] ? scores[team.id].reduce((acc, score) => acc + score, 0) : 0}
                 </td>
               </tr>
-            );
-          })}
-        </tbody>
-      </table>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
-}
+};
+
+export default ScoreBoard;
