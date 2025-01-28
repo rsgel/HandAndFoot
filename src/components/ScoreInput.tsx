@@ -168,6 +168,9 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
 
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Special Books</h4>
+          <p className="text-sm text-gray-400 mt-1">
+              Enter the number of books for each category (7 cards)
+          </p>
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label className="block text-sm text-gray-300">7's Books</label>
@@ -176,6 +179,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.sevens}
                 onChange={(e) => handleChange('books', 'sevens', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -188,6 +192,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.fives}
                 onChange={(e) => handleChange('books', 'fives', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -200,6 +205,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.wilds}
                 onChange={(e) => handleChange('books', 'wilds', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -218,6 +224,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.red}
                 onChange={(e) => handleChange('books', 'red', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -230,6 +237,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.books.black}
                 onChange={(e) => handleChange('books', 'black', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -241,22 +249,26 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Card Points</h4>
           <div>
+            <p className="text-sm text-gray-400 mt-1">
+              Enter the total points from melded cards (Jokers: 50, Aces/2s: 20, 8-K: 10, 4-7: 5)
+            </p>
             <input
               type="number"
               value={meldedPoints}
               onChange={(e) => setMeldedPoints(parseInt(e.target.value) || 0)}
+              onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               disabled={submitted}
               inputMode="numeric"
             />
-            <p className="text-sm text-gray-400 mt-1">
-              Enter the total points from melded cards (Jokers: 50, Aces/2s: 20, 8-K: 10, 4-7: 5)
-            </p>
           </div>
         </div>
 
         <div className="space-y-2">
           <h4 className="text-lg font-semibold text-white">Penalties</h4>
+          <p className="text-sm text-gray-400 mt-1">
+              Enter the number of special cards left in your hand (or foot)
+          </p>
           <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="block text-sm text-gray-300">Black 3s</label>
@@ -265,6 +277,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.penalties.blackThrees}
                 onChange={(e) => handleChange('penalties', 'blackThrees', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -277,6 +290,7 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
                 min="0"
                 value={score.penalties.redThrees}
                 onChange={(e) => handleChange('penalties', 'redThrees', parseInt(e.target.value) || 0)}
+                onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
                 className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 disabled={submitted}
                 inputMode="numeric"
@@ -289,14 +303,14 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
           <h4 className="text-lg font-semibold text-white">Bonuses</h4>
           <div className="flex items-center space-x-4">
             <label className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                checked={score.bonuses.goingOut}
-                onChange={(e) => handleChange('bonuses', 'goingOut', e.target.checked)}
-                className="form-checkbox text-indigo-600 rounded"
+              <button
+                type="button"
+                onClick={() => handleChange('bonuses', 'goingOut', !score.bonuses.goingOut)}
+                className={`px-4 py-2 rounded ${score.bonuses.goingOut ? 'bg-indigo-600 text-white' : 'bg-gray-300 text-gray-700'}`}
                 disabled={submitted}
-              />
-              <span className="text-gray-300">Going Out</span>
+              >
+                Going Out
+              </button>
             </label>
             <div>
               <label className="block text-sm text-gray-300">Red 3s Collected</label>
