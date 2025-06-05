@@ -2,10 +2,12 @@
 import Layout from '../layouts/Layout.astro';
 import ScoreInput from '../components/ScoreInput';
 import ScoreBoard from '../components/ScoreBoard';
+import GameStateSync from '../components/GameStateSync';
 ---
 
 <Layout title="Hand and Foot Scorer">
   <main class="container mx-auto px-4 py-8">
+    <GameStateSync client:load />
     <h1 class="text-4xl font-bold text-center text-white mb-8">Hand and Foot Scorer</h1>
     <p class="text-center text-gray-300 mb-8">
       The hand contains 11 cards and the foot contains 15 cards. Don't forget your foot soldier!
