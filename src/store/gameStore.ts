@@ -44,8 +44,16 @@ const useGameStore = create<GameState>((set) => ({
   ],
   currentRound: 1,
   scores: [
-    { teamId: 1, rounds: Array(4).fill(initialRoundScore()), totalScore: 0 },
-    { teamId: 2, rounds: Array(4).fill(initialRoundScore()), totalScore: 0 }
+    {
+      teamId: 1,
+      rounds: Array.from({ length: 4 }, () => initialRoundScore()),
+      totalScore: 0,
+    },
+    {
+      teamId: 2,
+      rounds: Array.from({ length: 4 }, () => initialRoundScore()),
+      totalScore: 0,
+    },
   ],
   meldRequirements: [50, 90, 120, 150],
   completedRounds: new Set<string>(),
