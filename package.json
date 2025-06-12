@@ -8,7 +8,8 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "rm -rf build && npx esbuild src/store/gameStore.ts --outfile=build/store/gameStore.js --format=esm --platform=node && node --test"
   },
   "dependencies": {
     "astro": "^4.15.11",
