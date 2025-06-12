@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import type { GameState, Team, TeamScore, RoundScore } from '../types/game';
 
-const calculateRoundScore = (round: RoundScore, meldedPoints: number): number => {
+const calculateRoundScore = (round: RoundScore): number => {
   const bookPoints = 
     round.books.red * 500 +
     round.books.black * 300 +
@@ -19,7 +19,7 @@ const calculateRoundScore = (round: RoundScore, meldedPoints: number): number =>
     (round.bonuses.redThrees * 100) +
     (round.bonuses.redThrees >= 7 ? 300 : 0);
 
-  return bookPoints + meldedPoints + penaltyPoints + bonusPoints;
+  return bookPoints + round.meldedCards + penaltyPoints + bonusPoints;
 };
 
 const initialRoundScore = (): RoundScore => ({
@@ -71,14 +71,21 @@ export const addCompletedRound = (teamId: number, roundIndex: number) =>
     completedRounds: new Set([...state.completedRounds, `${teamId}-${roundIndex}`])
   }));
 
-export const updateRoundScore = (teamId: number, roundIndex: number, score: RoundScore, meldedPoints: number) =>
+export const removeCompletedRound = (teamId: number, roundIndex: number) =>
+  useGameStore.setState((state) => {
+    const updated = new Set(state.completedRounds);
+    updated.delete(`${teamId}-${roundIndex}`);
+    return { completedRounds: updated };
+  });
+
+export const updateRoundScore = (teamId: number, roundIndex: number, score: RoundScore) =>
   useGameStore.setState((state) => {
     const newScores = state.scores.map((teamScore) => {
       if (teamScore.teamId === teamId) {
         const newRounds = [...teamScore.rounds];
         newRounds[roundIndex] = {
           ...score,
-          totalScore: calculateRoundScore(score, meldedPoints),
+          totalScore: calculateRoundScore(score),
         };
         return {
           ...teamScore,

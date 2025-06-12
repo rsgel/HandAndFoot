@@ -31,13 +31,13 @@ beforeEach(() => {
 test('updateRoundScore calculates totals correctly', () => {
   const round = {
     books: { red: 1, black: 1, sevens: 0, fives: 0, wilds: 0 },
-    meldedCards: 0,
+    meldedCards: 100,
     penalties: { blackThrees: 1, redThrees: 0, remainingCards: 0 },
     bonuses: { goingOut: false, redThrees: 2 },
     totalScore: 0,
   };
 
-  updateRoundScore(1, 0, round, 100);
+  updateRoundScore(1, 0, round);
   const state = useGameStore.getState();
   const score = state.scores[0].rounds[0].totalScore;
   const teamTotal = state.scores[0].totalScore;

@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import type { RoundScore } from '../types/game';
-import useGameStore, { updateRoundScore, updateTeamName, addCompletedRound } from '../store/gameStore';
+import useGameStore, { updateRoundScore, updateTeamName, addCompletedRound, removeCompletedRound } from '../store/gameStore';
 
 interface ScoreInputProps {
   teamId: number;
@@ -14,26 +14,26 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
   const [teamName, setTeamName] = useState(team.name);
   const [activeRound, setActiveRound] = useState(0);
   const meldRequirements = [50, 90, 120, 150];
-  const [score, setScore] = useState<RoundScore>({
+  const emptyRound = (): RoundScore => ({
     books: { red: 0, black: 0, sevens: 0, fives: 0, wilds: 0 },
     meldedCards: 0,
-    penalties: {
-      blackThrees: 0,
-      redThrees: 0,
-      remainingCards: 0,
-    },
-    bonuses: {
-      goingOut: false,
-      redThrees: 0,
-    },
+    penalties: { blackThrees: 0, redThrees: 0, remainingCards: 0 },
+    bonuses: { goingOut: false, redThrees: 0 },
     totalScore: 0,
   });
 
-  const [meldedPoints, setMeldedPoints] = useState(0);
-  const [currentScore, setCurrentScore] = useState(0);
-  const [submitted, setSubmitted] = useState(false);
+  const [scores, setScores] = useState<RoundScore[]>(
+    Array.from({ length: 4 }, () => emptyRound())
+  );
+  const [meldedPoints, setMeldedPoints] = useState<number[]>([0, 0, 0, 0]);
 
-  const calculateScore = (currentScore: RoundScore, meldedPoints: number): number => {
+  const score = scores[activeRound];
+  const currentScore = useMemo(
+    () => calculateScore(score, meldedPoints[activeRound]),
+    [score, meldedPoints[activeRound]]
+  );
+
+  function calculateScore(currentScore: RoundScore, meldedPoints: number): number {
     const bookPoints = 
       currentScore.books.red * 500 +
       currentScore.books.black * 300 +
@@ -52,51 +52,45 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
       (currentScore.bonuses.redThrees >= 7 ? 300 : 0);
 
     return bookPoints + meldedPoints + penaltyPoints + bonusPoints;
-  };
+  }
 
-  useEffect(() => {
-    const newTotal = calculateScore(score, meldedPoints);
-    setCurrentScore(newTotal);
-  }, [score, meldedPoints]);
 
-  const handleChange = (category: string, subcategory: string, value: number | boolean) => {
-    setScore(prev => ({
-      ...prev,
-      [category]: {
-        ...(prev[category as keyof RoundScore] as object),
+  const handleChange = (
+    category: string,
+    subcategory: string,
+    value: number | boolean
+  ) => {
+    setScores(prev => {
+      const updated = [...prev];
+      const current = { ...updated[activeRound] } as any;
+      current[category] = {
+        ...(current[category] as object),
         [subcategory]: value,
-      },
-    }));
+      };
+      updated[activeRound] = { ...current };
+      return updated;
+    });
   };
 
   const handleSubmit = () => {
+    const round = scores[activeRound];
+    const total = calculateScore(round, meldedPoints[activeRound]);
     const finalScore = {
-      ...score,
-      meldedCards: 0,
-      totalScore: currentScore,
+      ...round,
+      meldedCards: meldedPoints[activeRound],
+      totalScore: total,
     };
-    updateRoundScore(teamId, activeRound, finalScore, meldedPoints);
+    updateRoundScore(teamId, activeRound, finalScore);
     addCompletedRound(teamId, activeRound);
-    setSubmitted(true);
+    setScores(prev => {
+      const updated = [...prev];
+      updated[activeRound] = finalScore;
+      return updated;
+    });
+  };
 
-    setTimeout(() => {
-      if (activeRound < 3) {
-        setActiveRound(activeRound + 1);
-        setScore({
-          books: { red: 0, black: 0, sevens: 0, fives: 0, wilds: 0 },
-          meldedCards: 0,
-          penalties: { blackThrees: 0, redThrees: 0, remainingCards: 0 },
-          bonuses: { goingOut: false, redThrees: 0 },
-          totalScore: 0,
-        });
-        setMeldedPoints(0);
-        setCurrentScore(0);
-        setSubmitted(false);
-      }
-      if (onRoundComplete) {
-        onRoundComplete();
-      }
-    }, 1000);
+  const handleEdit = () => {
+    removeCompletedRound(teamId, activeRound);
   };
 
   const handleTeamNameSubmit = () => {
@@ -105,6 +99,8 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
   };
 
   const isRoundCompleted = (round: number) => completedRounds.has(`${teamId}-${round}`);
+
+  const submitted = isRoundCompleted(activeRound);
 
   return (
     <div className="space-y-4">
@@ -254,8 +250,14 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
             </p>
             <input
               type="number"
-              value={meldedPoints}
-              onChange={(e) => setMeldedPoints(parseInt(e.target.value) || 0)}
+              value={meldedPoints[activeRound]}
+              onChange={(e) =>
+                setMeldedPoints(prev => {
+                  const arr = [...prev];
+                  arr[activeRound] = parseInt(e.target.value) || 0;
+                  return arr;
+                })
+              }
               onFocus={(e) => e.target.value === "0" && (e.target.value = "")}
               className="w-full px-3 py-2 bg-gray-700 text-white rounded border border-gray-600 focus:border-indigo-500 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
               disabled={submitted}
@@ -328,17 +330,29 @@ export default function ScoreInput({ teamId, onRoundComplete }: ScoreInputProps)
           </div>
         </div>
 
-        <button
-          onClick={handleSubmit}
-          disabled={submitted}
-          className={`w-full py-2 px-4 rounded-md transition-colors ${
-            submitted
-              ? 'bg-gray-600 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-700'
-          } text-white font-semibold`}
-        >
-          {submitted ? 'Score Submitted' : 'Submit Score'}
-        </button>
+        {submitted ? (
+          <>
+            <button
+              disabled
+              className="w-full py-2 px-4 rounded-md bg-gray-600 text-white font-semibold cursor-not-allowed"
+            >
+              Score Submitted
+            </button>
+            <button
+              onClick={handleEdit}
+              className="w-full mt-2 py-2 px-4 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+            >
+              Edit
+            </button>
+          </>
+        ) : (
+          <button
+            onClick={handleSubmit}
+            className="w-full py-2 px-4 rounded-md bg-indigo-600 hover:bg-indigo-700 text-white font-semibold"
+          >
+            Submit Score
+          </button>
+        )}
       </div>
     </div>
   );
